@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.env
+.venv/
+env/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Power BI temp/lock files
+~$*
+*.tmp

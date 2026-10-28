@@ -1,0 +1,209 @@
+/*
+==============================================================================
+PROJECT: Sales Performance & E-Commerce Analytics
+FILE: dax_measures.txt
+PURPOSE: Production-Ready DAX Measures for Power BI Desktop.
+         Organized into Folders: Core Financials, Operational KPIs,
+         Time Intelligence (YoY / MoM), and Diagnostic Ratios.
+AUTHOR: Junior Data Analyst Portfolio
+==============================================================================
+
+INSTRUCTIONS FOR POWER BI:
+1. It is best practice to create an empty table named '_Measures' to house all DAX measures:
+   - Click 'Enter Data' in the Home ribbon -> Name the table '_Measures' -> Click 'Load'.
+2. In the Modeling tab, create a 'New Measure' and paste the formulas below.
+3. Set the 'Display Folder' and 'Format' properties as indicated for each measure.
+*/
+
+// ==============================================================================
+// 1. CORE FINANCIAL MEASURES
+// ==============================================================================
+
+// 1.1 Total Revenue (Sales)
+// Format: Currency ($#,##0)
+// Folder: Financials
+Total Sales = 
+SUM(superstore_orders[sales])
+
+
+// 1.2 Total Net Profit
+// Format: Currency ($#,##0)
+// Folder: Financials
+Total Profit = 
+SUM(superstore_orders[profit])
+
+
+// 1.3 Total Cost of Goods Sold (COGS)
+// Format: Currency ($#,##0)
+// Folder: Financials
+Total Cost = 
+[Total Sales] - [Total Profit]
+
+
+// 1.4 Profit Margin Percentage
+// Format: Percentage (0.0%)
+// Folder: Financials
+// Note: DIVIDE() protects against division-by-zero errors gracefully
+Profit Margin % = 
+DIVIDE(
+    [Total Profit], 
+    [Total Sales], 
+    0
+)
+
+
+// ==============================================================================
+// 2. VOLUME & ORDER-LEVEL METRICS (TRUE AOV)
+// ==============================================================================
+
+// 2.1 Total Distinct Orders
+// Format: Whole Number (#,##0)
+// Folder: Orders & Volume
+Total Orders = 
+DISTINCTCOUNT(superstore_orders[order_id])
+
+
+// 2.2 Total Units Sold
+// Format: Whole Number (#,##0)
+// Folder: Orders & Volume
+Total Quantity = 
+SUM(superstore_orders[quantity])
+
+
+// 2.3 Total Order Lines (Items Scanned)
+// Format: Whole Number (#,##0)
+// Folder: Orders & Volume
+Total Order Lines = 
+COUNTROWS(superstore_orders)
+
+
+// 2.4 True Average Order Value (AOV)
+// Format: Currency ($#,##0.00)
+// Folder: Orders & Volume
+// CRITICAL: True AOV divides by DISTINCT orders, never by total rows!
+Average Order Value = 
+DIVIDE(
+    [Total Sales], 
+    [Total Orders], 
+    0
+)
+
+
+// 2.5 Average Items Per Order (Basket Depth)
+// Format: Decimal (0.0)
+// Folder: Orders & Volume
+Avg Items Per Order = 
+DIVIDE(
+    [Total Order Lines], 
+    [Total Orders], 
+    0
+)
+
+
+// ==============================================================================
+// 3. DISCOUNT & LOSS DIAGNOSTIC MEASURES
+// ==============================================================================
+
+// 3.1 Average Applied Discount
+// Format: Percentage (0.0%)
+// Folder: Diagnostics
+Average Discount % = 
+AVERAGE(superstore_orders[discount])
+
+
+// 3.2 Total Financial Loss (Negative Profit Sum)
+// Format: Currency ($#,##0)
+// Folder: Diagnostics
+Total Profit Loss = 
+CALCULATE(
+    [Total Profit], 
+    superstore_orders[profit] < 0
+)
+
+
+// 3.3 Loss-Making Transactions Count
+// Format: Whole Number (#,##0)
+// Folder: Diagnostics
+Loss Making Lines Count = 
+CALCULATE(
+    COUNTROWS(superstore_orders), 
+    superstore_orders[profit] < 0
+)
+
+
+// 3.4 Unprofitable Transaction Ratio %
+// Format: Percentage (0.0%)
+// Folder: Diagnostics
+Unprofitable Line % = 
+DIVIDE(
+    [Loss Making Lines Count], 
+    [Total Order Lines], 
+    0
+)
+
+
+// ==============================================================================
+// 4. TIME INTELLIGENCE & GROWTH MEASURES (REQUIRES DimDate TABLE)
+// ==============================================================================
+
+// 4.1 Prior Year Sales (YoY Benchmark)
+// Format: Currency ($#,##0)
+// Folder: Time Intelligence
+Sales SPLY = 
+CALCULATE(
+    [Total Sales], 
+    SAMEPERIODLASTYEAR(DimDate[Date])
+)
+
+
+// 4.2 Sales Year-over-Year Dollar Growth
+// Format: Currency ($#,##0)
+// Folder: Time Intelligence
+Sales YoY Growth $ = 
+[Total Sales] - [Sales SPLY]
+
+
+// 4.3 Sales Year-over-Year Percentage Growth
+// Format: Percentage (0.0%)
+// Folder: Time Intelligence
+Sales YoY Growth % = 
+DIVIDE(
+    [Sales YoY Growth $], 
+    [Sales SPLY], 
+    BLANK()
+)
+
+
+// 4.4 Prior Year Profit
+// Format: Currency ($#,##0)
+// Folder: Time Intelligence
+Profit SPLY = 
+CALCULATE(
+    [Total Profit], 
+    SAMEPERIODLASTYEAR(DimDate[Date])
+)
+
+
+// 4.5 Profit YoY Growth %
+// Format: Percentage (0.0%)
+// Folder: Time Intelligence
+Profit YoY Growth % = 
+DIVIDE(
+    [Total Profit] - [Profit SPLY], 
+    [Profit SPLY], 
+    BLANK()
+)
+
+
+// ==============================================================================
+// 5. CONDITIONAL FORMATTING DYNAMIC COLOR MEASURES
+// ==============================================================================
+
+// 5.1 Dynamic Profit Margin Color (For KPI Cards and Table Bars)
+// Returns Hex Code for Power BI Conditional Formatting -> Field Value
+Profit Color Alert = 
+IF(
+    [Total Profit] < 0, 
+    "#EF4444", -- Crimson Red for Net Losses
+    IF([Profit Margin %] < 0.10, "#F59E0B", "#10B981") -- Amber for low margin, Emerald for healthy
+)
