@@ -240,7 +240,3 @@ The dashboard is structured into a clean, restrained 2-page report engineered fo
 
 ---
 
-## 12. Author & Portfolio Contact
-- **Project Lead**: Junior Data Analyst Portfolio
-- **Target Role**: Data Analyst / BI Analyst (2026 Graduate)
-- **Documentation**: [Data Dictionary](docs/data_dictionary.md) | [Interview Q&A](docs/interview_prep.md) | [Resume Description](docs/resume_bullets.md)
