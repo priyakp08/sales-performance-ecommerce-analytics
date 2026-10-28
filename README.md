@@ -209,18 +209,20 @@ ORDER BY MIN(discount) ASC;
 The dashboard is structured into a clean, restrained 2-page report engineered for executive review:
 
 ### Page 1: Executive Sales & Profitability Performance
-![Executive Overview Dashboard](docs/screenshots/page1_executive_overview.jpg)
+![Executive Overview Dashboard](docs/screenshots/dashboard_actual_screen.png)
 
 - **Top KPI Cards**: Total Revenue ($2.30M), Net Profit ($286.4K), Profit Margin (12.5%), Total Orders (5,009), True AOV ($458.61).
-- **Monthly Trajectory**: Dual-axis visual illustrating sales volume growth and margin fluctuations.
-- **Geographic & Category Matrix**: Highlighting regional profit leaders (West & East) vs underperformers (Central).
+- **Monthly Trajectory**: Annual sales trajectory line chart.
+- **Geographic & Category Matrix**: Highlighting regional profit leaders (West & East) vs underperformers (Central), and sub-category sales mix.
+- **Customer Segment Mix**: Donut chart showing Consumer (50.6%), Corporate (30.7%), and Home Office (18.7%).
 
 ### Page 2: Margin Bleed & Discount Diagnostics
-![Margin Bleed Diagnostics](docs/screenshots/page2_margin_diagnostics.jpg)
+![Margin Bleed Diagnostics](docs/screenshots/dashboard_diagnostics_actual.png)
 
-- **Discount Tier Margin Curve**: Visualizing the cliff drop from +29.5% to -77.4% margin.
-- **Top 10 Profit Bleeders**: Actionable table identifying SKUs with four-figure losses.
-- **State-Level Profit Disparity**: Highlighting regional discounting practices.
+- **Diagnostic KPIs**: Total Dollar Loss ($-156.13K), Loss-Making Rows (2K / 1,871 lines).
+- **Discount & Profit Sensitivity**: Profit by discount level illustrating margin degradation.
+- **Bottom 10 Products by Profit**: Highlighting top profit bleeders in bulky furniture (Tables and Bookcases).
+- **Profit by State**: Exposing regional discount-driven margin leaks (Texas, Ohio, Pennsylvania).
 
 ---
 
